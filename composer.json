@@ -1,0 +1,35 @@
+{
+    "name": "ithilbert/customer",
+    "type": "libary",
+    "license": "MIT",
+    "description": "Kundenverwaltung",
+    "keywords": [
+        "it-hilbert",
+        "laravel",
+        "homepage",
+        "customer"
+    ],
+    "authors": [{
+        "name": "Jörg Hilbert",
+        "homepage": "https://www.it-hilbert.com",
+        "role": "Developer"
+    }],
+    "homepage": "https://www.it-hilbert.com",
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "ITHilbert\\Customer\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ITHilbert\\Customer\\CustomerServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    }
+}
