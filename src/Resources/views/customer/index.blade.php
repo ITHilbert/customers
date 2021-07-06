@@ -32,18 +32,11 @@
 
 
 <dialog-delete title="Kunden löschen" body="Wollen Sie wirklich diesen Kunden löschen?" route="{{ route('customer.delete',0) }}" ></dialog-delete>
-
-
 @stop
 
-@section('adminlte_css')
-@stop
 
-@section('adminlte_js')
+@section('js')
 <script>
-
-
-
   $(function() {
 
     var table = $('.data-table').DataTable({

@@ -47,8 +47,8 @@ class CustomerInstall extends Command
         $this->info('php artisan migrate');
         exec('php artisan migrate');
 
-        $this->info('php artisan db:seed --class="ITHilbert\Customer\Database\Seeders\DatabaseSeeder"');
-        exec('php artisan db:seed --class="ITHilbert\Customer\Database\Seeders\DatabaseSeeder"');
+        $this->info('php artisan db:seed --class="ITHilbert\Customer\Database\Seeders\CustomerDatabaseSeeder"');
+        exec('php artisan db:seed --class="ITHilbert\Customer\Database\Seeders\CustomerDatabaseSeeder"');
 
         return 0;
     }

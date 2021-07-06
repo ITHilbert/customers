@@ -4,9 +4,9 @@ namespace ITHilbert\Customer\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Customer\Database\Seeders\CustomerTypesTableSeeder;
-use Modules\Customer\Database\Seeders\InvoiceTypesTableSeeder;
-use NameAddressTableSeeder;
+use ITHilbert\Customer\Database\Seeders\CustomerTypesTableSeeder;
+use ITHilbert\Customer\Database\Seeders\InvoiceTypesTableSeeder;
+use ITHilbert\Customer\Database\Seeders\NameAddressTableSeeder;
 
 class CustomerDatabaseSeeder extends Seeder
 {

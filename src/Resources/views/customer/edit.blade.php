@@ -13,7 +13,7 @@
         <div class="form-group row mb-2">
             <label for="customer_type_id" class="col-md-4 col-form-label text-md-right">@lang('customer::customer.customer_type_id')</label>
             <div class="col-md-6">
-            <cb name="customer_type_id" :options="{{ $customer->getCustomerTypesCB() }}" value="{{ old('customer_type_id', $customer->customer_type_id) }}"></cb>
+            <combobox name="customer_type_id" :options="{{ $customer->getCustomerTypesCB() }}" value="{{ old('customer_type_id', $customer->customer_type_id) }}"></combobox>
             </div>
         </div>
 
@@ -36,7 +36,7 @@
         <div class="form-group row mb-2">
             <label for="address_id" class="col-md-4 col-form-label text-md-right">@lang('customer::customer.address_id')</label>
             <div class="col-md-6">
-                <cb name="address_id" value="{{ old('address_id', $customer->address_id) }}" :options="{{ $customer->getNameAddressCB() }}"></cb>
+                <combobox name="address_id" value="{{ old('address_id', $customer->address_id) }}" :options="{{ $customer->getNameAddressCB() }}"></combobox>
             </div>
         </div>
 
@@ -96,7 +96,7 @@
         <div class="form-group row mb-2">
             <label for="invoice_type_id" class="col-md-4 col-form-label text-md-right">@lang('customer::customer.invoice_type')</label>
             <div class="col-md-6">
-                <cb name="invoice_type_id" value="{{ old('invoice_type_id', $customer->invoice_type_id) }}" :options="{{ $customer->getInvoiceTypesCB() }}"></cb>
+                <combobox name="invoice_type_id" value="{{ old('invoice_type_id', $customer->invoice_type_id) }}" :options="{{ $customer->getInvoiceTypesCB() }}"></combobox>
             </div>
         </div>
 
@@ -181,11 +181,4 @@
     </hform>
 </div>
 </card>
-@stop
-
-@section('adminlte_css')
-@stop
-
-@section('adminlte_js')
-    <script src="{{ asset('js/customer.js') }}" ></script>
 @stop

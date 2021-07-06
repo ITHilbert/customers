@@ -180,10 +180,3 @@
 </div>
 </card>
 @stop
-
-@section('adminlte_css')
-@stop
-
-@section('adminlte_js')
-    <script src="{{ asset('js/customer.js') }}" ></script>
-@stop
