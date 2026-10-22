@@ -68,7 +68,7 @@ class CustomerServiceProvider extends ServiceProvider
             __DIR__ .'/Resources/views/layouts/customer.blade.php' => resource_path('views/layouts/customer.blade.php'),
         ]);
 
-        $this->loadViewsFrom(resource_path('Resources/views/vendor/customer'), 'customer');
+        $this->loadViewsFrom(__DIR__.'/Resources/views', 'customer');
     }
 
     /**
