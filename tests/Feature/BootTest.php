@@ -134,10 +134,10 @@ final class BootTest extends TestCase
         $this->assertDatabaseHas('name_address', ['id' => 2, 'address' => 'Frau']);
     }
 
-    // OFFEN-1 (roter Test, Defekt): Die Entities verwenden ITHilbert\Vue\Traits\VueComboBox und
+    // Regression: Die Entities verwendeten ITHilbert\Vue\Traits\VueComboBox und
     // ITHilbert\Vue\Entities\ComboBox. Diese Klassen existieren nirgends (heute: ITHilbert\LaravelKit\...).
     // Jede Nutzung von Customer, CustomerType, InvoiceType oder NameAddress wirft "Trait not found".
-    // Statische Prüfung ueber den Composer-Loader, damit Testalias (siehe MitLaravelKitAlias) das Ergebnis nicht verfaelschen.
+    // Statische Prüfung über den Composer-Loader.
     public function test_alle_externen_klassen_der_entities_sind_aufloesbar(): void
     {
         $loader = null;

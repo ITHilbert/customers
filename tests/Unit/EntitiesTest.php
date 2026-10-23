@@ -9,22 +9,17 @@ use ITHilbert\Customer\Entities\Customer;
 use ITHilbert\Customer\Entities\CustomerType;
 use ITHilbert\Customer\Entities\InvoiceType;
 use ITHilbert\Customer\Entities\NameAddress;
-use ITHilbert\Customer\Tests\Concerns\MitLaravelKitAlias;
 use ITHilbert\Customer\Tests\TestCase;
 
 /**
  * Charakterisierung der Entities (Ist-Stand, keine Spec).
- * Läuft mit dem Behelf-Alias für OFFEN-1 (siehe MitLaravelKitAlias und BootTest).
  */
 final class EntitiesTest extends TestCase
 {
-    use MitLaravelKitAlias;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->setzeLaravelKitAlias();
         $this->migrieren();
         $this->artisan('db:seed', ['--class' => CustomerDatabaseSeeder::class])->assertSuccessful();
     }
@@ -34,7 +29,17 @@ final class EntitiesTest extends TestCase
      */
     private function kunde(array $attribute = []): Customer
     {
-        return Customer::create($attribute + ['customer_type_id' => 2, 'first_name' => 'Max', 'last_name' => 'Muster', 'edit_user_id' => 1]);
+        return Customer::forceCreate($attribute + ['customer_type_id' => 2, 'first_name' => 'Max', 'last_name' => 'Muster', 'edit_user_id' => 1]);
+    }
+
+    // Regression: Mass Assignment - edit_user_id darf nicht per create() gesetzt werden
+    public function test_create_uebernimmt_edit_user_id_nicht_per_mass_assignment(): void
+    {
+        $kunde = new Customer;
+        $kunde->fill(['customer_type_id' => 2, 'first_name' => 'Max', 'last_name' => 'Muster', 'edit_user_id' => 999]);
+
+        $this->assertNull($kunde->edit_user_id);
+        $this->assertSame('Max', $kunde->first_name);
     }
 
     // Charakterisierung
@@ -106,7 +111,7 @@ final class EntitiesTest extends TestCase
         $this->assertSame('Muster, Max', $daten[0]['cbCaption']);
     }
 
-    // OFFEN-4 (roter Test, Defekt): getCustomerTypeText() und getInvoiceTypeText() suchen mit address_id statt mit
+    // Regression: getCustomerTypeText() und getInvoiceTypeText() suchen mit address_id statt mit
     // customer_type_id bzw. invoice_type_id (Copy-Paste). Kunde Typ 2 (Privat), Anrede 1 -> liefert "Firma".
     public function test_kundenart_text_nutzt_customer_type_id(): void
     {
@@ -116,7 +121,7 @@ final class EntitiesTest extends TestCase
         $this->assertSame('Nicht EU Ausland', $kunde->getInvoiceTypeText());
     }
 
-    // OFFEN-5 (roter Test, Defekt): Die Relation invoiceType() nutzt den Fremdschluessel 'invoice_typ_id'
+    // Regression: Die Relation invoiceType() nutzt den Fremdschluessel 'invoice_typ_id'
     // (Tippfehler), die Spalte heisst invoice_type_id. Es wird immer das leere Default-Modell geliefert.
     public function test_relation_invoice_type_liefert_den_rechnungstyp(): void
     {

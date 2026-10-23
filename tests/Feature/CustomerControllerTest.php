@@ -7,23 +7,19 @@ namespace ITHilbert\Customer\Tests\Feature;
 use Illuminate\Auth\GenericUser;
 use ITHilbert\Customer\Database\Seeders\CustomerDatabaseSeeder;
 use ITHilbert\Customer\Entities\Customer;
-use ITHilbert\Customer\Tests\Concerns\MitLaravelKitAlias;
 use ITHilbert\Customer\Tests\TestCase;
 use Yajra\DataTables\Facades\DataTables;
 
 /**
  * Charakterisierung der Kern-Routen (Ist-Stand, keine Spec).
- * Läuft mit dem Behelf-Alias für OFFEN-1; das Host-Layout kommt als Stub aus tests/Fixtures/views.
+ * Das Host-Layout kommt als Stub aus tests/Fixtures/views.
  */
 final class CustomerControllerTest extends TestCase
 {
-    use MitLaravelKitAlias;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->setzeLaravelKitAlias();
         $this->migrieren();
         $this->artisan('db:seed', ['--class' => CustomerDatabaseSeeder::class])->assertSuccessful();
     }
@@ -38,7 +34,7 @@ final class CustomerControllerTest extends TestCase
      */
     private function kunde(array $attribute = []): Customer
     {
-        return Customer::create($attribute + ['customer_type_id' => 2, 'first_name' => 'Max', 'last_name' => 'Muster', 'edit_user_id' => 1]);
+        return Customer::forceCreate($attribute + ['customer_type_id' => 2, 'first_name' => 'Max', 'last_name' => 'Muster', 'edit_user_id' => 1]);
     }
 
     // Charakterisierung: Gäste erhalten 401 (JSON) auf allen Kernrouten
@@ -76,7 +72,7 @@ final class CustomerControllerTest extends TestCase
             ->assertJsonPath('data', []);
     }
 
-    // OFFEN-7 (roter Test, Defekt): Die Ajax-Liste baut je Zeile die Aktionsbuttons mit route('projects.index');
+    // Regression: Die Ajax-Liste baut je Zeile die Aktionsbuttons mit route('projects.index');
     // diese Route gehoert zu einem anderen Paket und ist hier nicht definiert -> RouteNotFoundException (500),
     // sobald ein Kunde existiert.
     public function test_ajax_liste_mit_kunde_liefert_zeile(): void
@@ -139,9 +135,7 @@ final class CustomerControllerTest extends TestCase
         ])->assertSessionHasErrors(['email', 'hourly_rate', 'mileage_allowance']);
     }
 
-    // OFFEN-6 (roter Test, Defekt): store() ruft Customer::create($request->all()) ohne edit_user_id auf;
-    // die Spalte ist NOT NULL ohne Default -> SQL-Fehler (500). Ausserdem ist edit_user_id fillable
-    // und liesse sich per Request setzen (Mass-Assignment).
+    // Regression: store() setzte edit_user_id nicht (NOT NULL ohne Default -> SQL-Fehler 500).
     public function test_store_legt_kunden_an_und_leitet_auf_die_liste(): void
     {
         $this->anmelden()->post('/customer/store', [
@@ -186,6 +180,33 @@ final class CustomerControllerTest extends TestCase
         ])->assertRedirect(route('customer.list'))->assertSessionHas('alert-type', 'success');
 
         $this->assertDatabaseHas('customers', ['id' => $kunde->id, 'first_name' => 'Maria', 'edit_user_id' => 7]);
+    }
+
+    // Regression: Mass Assignment - ein mitgeschicktes edit_user_id wird bei store ignoriert
+    public function test_store_ignoriert_mitgeschicktes_edit_user_id(): void
+    {
+        $this->anmelden()->post('/customer/store', [
+            'customer_type_id' => 1, 'company_row_1' => 'ACME', 'address_id' => 1, 'email' => 'a@b.de',
+            'invoice_type_id' => 1, 'hourly_rate' => 10, 'mileage_allowance' => 1, 'edit_user_id' => 999,
+        ])->assertRedirect(route('customer.list'));
+
+        $this->assertDatabaseHas('customers', ['company_row_1' => 'ACME', 'edit_user_id' => 7]);
+        $this->assertDatabaseMissing('customers', ['edit_user_id' => 999]);
+    }
+
+    // Regression: Mass Assignment - ein mitgeschicktes edit_user_id wird bei update ignoriert
+    public function test_update_ignoriert_mitgeschicktes_edit_user_id(): void
+    {
+        $kunde = $this->kunde();
+
+        $this->anmelden()->post('/customer/update/'.$kunde->id, [
+            'customer_type_id' => 2, 'first_name' => 'Maria', 'last_name' => 'Muster', 'address_id' => 2,
+            'email' => 'm@b.de', 'invoice_type_id' => 1, 'hourly_rate' => 10, 'mileage_allowance' => 1,
+            'edit_user_id' => 999,
+        ])->assertRedirect(route('customer.list'));
+
+        $this->assertDatabaseHas('customers', ['id' => $kunde->id, 'first_name' => 'Maria', 'edit_user_id' => 7]);
+        $this->assertDatabaseMissing('customers', ['edit_user_id' => 999]);
     }
 
     // Charakterisierung

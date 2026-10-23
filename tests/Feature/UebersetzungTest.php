@@ -21,7 +21,7 @@ final class UebersetzungTest extends TestCase
         $this->assertSame('Name', $en['name'] ?? null);
     }
 
-    // OFFEN-3 (roter Test, Defekt): en/customer.php fehlen 7 Schluessel aus de/customer.php
+    // Regression: en/customer.php fehlen 7 Schluessel aus de/customer.php
     // (header_list, header_edit, header_release, customer, customers, MsgAddSuccess, MsgEditSuccess).
     public function test_englische_sprachdatei_enthaelt_alle_schluessel_der_deutschen(): void
     {
@@ -31,7 +31,7 @@ final class UebersetzungTest extends TestCase
         $this->assertSame([], array_values(array_diff(array_keys($de), array_keys($en))));
     }
 
-    // OFFEN-2 (roter Test, Defekt): loadTranslationsFrom() zeigt auf resource_path('/Resources/lang/vendor/customer')
+    // Regression: loadTranslationsFrom() zeigt auf resource_path('/Resources/lang/vendor/customer')
     // (Host-Pfad, existiert nicht) statt auf die Sprachdateien des Pakets. Der Schluessel wird daher nie uebersetzt.
     public function test_deutsche_uebersetzung_wird_geladen(): void
     {
