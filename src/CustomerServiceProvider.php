@@ -3,6 +3,8 @@
 namespace ITHilbert\Customer;
 
 use Illuminate\Support\ServiceProvider;
+use ITHilbert\Customer\App\Console\Commands\CustomerCopyFiles;
+use ITHilbert\Customer\App\Console\Commands\CustomerInstall;
 
 class CustomerServiceProvider extends ServiceProvider
 {
@@ -16,20 +18,19 @@ class CustomerServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerTranslations();
         $this->registerViews();
-        $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
         $this->registerRoutes();
         $this->publishAssets();
 
-        //Commands Registrieren
-        $this->commands( \ITHilbert\Customer\App\Console\Commands\CustomerCopyFiles::class );
-        $this->commands( \ITHilbert\Customer\App\Console\Commands\CustomerInstall::class );
+        // Commands Registrieren
+        $this->commands(CustomerCopyFiles::class);
+        $this->commands(CustomerInstall::class);
     }
-
 
     public function publishAssets()
     {
         $this->publishes([
-            __DIR__ .'/Resources/assets' => public_path('vendor/customer'),
+            __DIR__.'/Resources/assets' => public_path('vendor/customer'),
         ]);
     }
 
@@ -40,9 +41,8 @@ class CustomerServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
     }
-
 
     /**
      * Register config.
@@ -52,7 +52,7 @@ class CustomerServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__ .'/Config/config.php' => config_path('customer.php'),
+            __DIR__.'/Config/config.php' => config_path('customer.php'),
         ]);
     }
 
@@ -64,8 +64,8 @@ class CustomerServiceProvider extends ServiceProvider
     public function registerViews()
     {
         $this->publishes([
-            __DIR__ .'/Resources/views' => resource_path('views/vendor/customer'),
-            __DIR__ .'/Resources/views/layouts/customer.blade.php' => resource_path('views/layouts/customer.blade.php'),
+            __DIR__.'/Resources/views' => resource_path('views/vendor/customer'),
+            __DIR__.'/Resources/views/layouts/customer.blade.php' => resource_path('views/layouts/customer.blade.php'),
         ]);
 
         $this->loadViewsFrom(__DIR__.'/Resources/views', 'customer');
@@ -82,9 +82,6 @@ class CustomerServiceProvider extends ServiceProvider
             __DIR__.'/Resources/lang' => resource_path('lang/vendor/customer'),
         ]);
 
-        $this->loadTranslationsFrom( resource_path('/Resources/lang/vendor/customer'), 'customer');
+        $this->loadTranslationsFrom(__DIR__.'/Resources/lang', 'customer');
     }
-
-
-
 }
