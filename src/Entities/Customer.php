@@ -17,7 +17,7 @@ class Customer extends Model
      *
      * @var array
      */
-    protected $fillable = ['customer_type_id', 'company_row_1', 'company_row_2', 'address_id', 'titel', 'first_name', 'last_name', 'street', 'postcode', 'city', 'country', 'ustid', 'phone', 'mobile', 'fax', 'email', 'web', 'invoice_type_id', 'hourly_rate', 'mileage_allowance', 'comment', 'edit_user_id'];
+    protected $fillable = ['customer_type_id', 'company_row_1', 'company_row_2', 'address_id', 'titel', 'first_name', 'last_name', 'street', 'postcode', 'city', 'country', 'ustid', 'phone', 'mobile', 'fax', 'email', 'web', 'invoice_type_id', 'hourly_rate', 'mileage_allowance', 'comment'];
 
     /* ComboBox */
     public function getCbCaptionAttribute()
