@@ -90,21 +90,26 @@ final class BootTest extends TestCase
     public function test_routen_sind_mit_namen_und_methoden_registriert(): void
     {
         $erwartet = [
-            'customer.index' => ['customer/index', ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']],
-            'customer.list' => ['customer/list', ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']],
-            'customer.create' => ['customer/create', ['GET', 'HEAD']],
-            'customer.store' => ['customer/store', ['POST']],
-            'customer.edit' => ['customer/edit/{customerID}', ['GET', 'HEAD']],
-            'customer.update' => ['customer/update/{customerID}', ['POST']],
-            'customer.delete' => ['customer/delete/{customerID}', ['DELETE']],
-            'customer.show' => ['customer/{customerID}', ['GET', 'HEAD']],
+            'customer.index' => ['customer/index', ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], true],
+            'customer.list' => ['customer/list', ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], true],
+            'customer.create' => ['customer/create', ['GET', 'HEAD'], false],
+            'customer.store' => ['customer/store', ['POST'], false],
+            'customer.edit' => ['customer/edit/{customerID}', ['GET', 'HEAD'], false],
+            'customer.update' => ['customer/update/{customerID}', ['POST'], false],
+            'customer.delete' => ['customer/delete/{customerID}', ['DELETE'], false],
+            'customer.show' => ['customer/{customerID}', ['GET', 'HEAD'], false],
         ];
 
-        foreach ($erwartet as $name => [$uri, $methoden]) {
+        // Route::any(): Laravel 13 ergänzt QUERY, daher dort nur Teilmenge prüfen
+        foreach ($erwartet as $name => [$uri, $methoden, $any]) {
             $route = Route::getRoutes()->getByName($name);
             $this->assertNotNull($route, $name);
             $this->assertSame($uri, $route->uri(), $name);
-            $this->assertSame($methoden, $route->methods(), $name);
+            if ($any) {
+                $this->assertEqualsCanonicalizing($methoden, array_intersect($route->methods(), $methoden), $name);
+            } else {
+                $this->assertSame($methoden, $route->methods(), $name);
+            }
             $this->assertContains('auth', $route->gatherMiddleware(), $name);
             $this->assertContains('web', $route->gatherMiddleware(), $name);
         }
